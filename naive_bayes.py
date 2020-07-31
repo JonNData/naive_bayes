@@ -1,6 +1,15 @@
 import numpy as np 
 
 class MNNaiveBayes:
+    """
+    This class is written with the standard python library and NumPy.
+    The goal is to recreate a multinomial Naive Bayes classifcation model from scratch.
+    
+    Usage:
+    1. Instantiate the model
+    2. Fit it on a corpus of documents and an array of their binary classifications
+    3. Predict on another corpus to get an array of binary classes
+    """
   def __init__(self, k=0.5):
     self.k = k
     self.cat0_count = 0
