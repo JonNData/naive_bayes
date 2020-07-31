@@ -1,4 +1,8 @@
+# Run `pytest` in the terminal
 from naive_bayes import MNNaiveBayes
+
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.feature_extraction.text import CountVectorizer
 # Data will be from reddit. 
 # Train on 10 r/worldnews titles and 10 r/aww titles
 # test on 2 r/aww and 2 r/worldnews
@@ -37,6 +41,27 @@ X_test = [
           "My wife just sent me this photo of our cat at the vet. Safe to say she’s a little scared."
 ]
 
-mnnb = MNNaiveBayes()
-mnnb.fit(X,y)
-print(mnnb.predict(["coronavirus", "election", "cutie", "kitten"]))
+def test_nb_class():
+    # fit an instance and test it against 2 docs of each
+    nb = MNNaiveBayes()
+    nb.fit(X, y)
+    assert nb.predict(X[0:2] + X[-3:-1]) == [0, 0, 1, 1]
+
+
+def test_sklearn():
+    # Need to preprocess manually 
+    cv = CountVectorizer(strip_accents='ascii',
+                     token_pattern=u'(?ui)\\b\\w*[a-z]+\\w*\\b',
+                     lowercase=True, stop_words='english')
+    X_train_cv = cv.fit_transform(X)
+    X_test_cv = cv.transform(X_test)
+    # sklearn naive bayes
+    MNB = MultinomialNB()
+    MNB.fit(X_train_cv, y)
+    assert (MNB.predict(X_test_cv) == [0, 1, 1, 1]).all()
+
+    # our naive bayes from scratch
+    nb = MNNaiveBayes()
+    nb.fit(X, y)
+    assert nb.predict(X_test) == [0, 1, 1, 1]
+
